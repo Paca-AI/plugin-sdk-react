@@ -1,0 +1,51 @@
+{
+	"name": "@paca-ai/plugin-sdk-react",
+	"version": "0.1.0",
+	"description": "Paca Plugin SDK — frontend helpers for building Paca micro-frontend plugins",
+	"type": "module",
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org",
+		"access": "public"
+	},
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json && vite build",
+		"dev": "vite build --watch",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check ."
+	},
+	"peerDependencies": {
+		"react": ">=18.0.0",
+		"react-dom": ">=18.0.0",
+		"@tanstack/react-query": ">=5.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.12",
+		"@tanstack/react-query": "^5.99.2",
+		"@types/react": "^19.2.0",
+		"@types/react-dom": "^19.2.0",
+		"typescript": "^5.8.3",
+		"vite": "^6.0.0",
+		"vite-plugin-dts": "^4.0.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Paca-AI/plugin-sdk-react.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Paca-AI/plugin-sdk-react/issues"
+	},
+	"license": "Apache-2.0"
+}

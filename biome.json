@@ -1,0 +1,11 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+	"vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": false },
+	"files": { "includes": ["src"] },
+	"formatter": { "indentStyle": "tab" },
+	"javascript": { "formatter": { "quoteStyle": "double" } },
+	"linter": {
+		"enabled": true,
+		"rules": { "recommended": true }
+	}
+}
