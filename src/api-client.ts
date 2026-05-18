@@ -35,12 +35,13 @@ export interface PluginApiClientOptions {
 
 /**
  * PluginApiClient provides typed methods for common Paca API calls.
- * Plugin route calls are automatically prefixed with
- * `/plugins/{pluginId}/projects/{projectId}/`.
+ * Plugin route calls are prefixed with `/plugins/{pluginId}/`.
+ * Use the `projectId` property to include project context in paths when needed:
+ *   `pluginGet(id, \`/projects/${api.projectId}/my-resource\`)`
  */
 export class PluginApiClient {
 	private readonly baseUrl: string;
-	private readonly projectId: string;
+	public readonly projectId: string;
 	private readonly _fetch: PluginApiClientOptions["fetch"];
 
 	constructor(opts: PluginApiClientOptions) {
@@ -96,8 +97,9 @@ export class PluginApiClient {
 
 	/**
 	 * Call a GET route registered by this plugin.
-	 * The URL is built as:
-	 *   `{baseUrl}/plugins/{pluginId}/projects/{projectId}/{path}`
+	 * The URL is built as `{baseUrl}/plugins/{pluginId}{path}`.
+	 * For project-scoped routes, include the project prefix in `path`:
+	 *   `pluginGet(id, \`/projects/${api.projectId}/resource\`)`
 	 */
 	async pluginGet<T>(pluginId: string, path: string): Promise<T> {
 		return this._get<T>(this._pluginUrl(pluginId, path));
@@ -140,7 +142,7 @@ export class PluginApiClient {
 
 	private _pluginUrl(pluginId: string, path: string): string {
 		const p = path.startsWith("/") ? path : `/${path}`;
-		return `${this.baseUrl}/plugins/${pluginId}/projects/${this.projectId}${p}`;
+		return `${this.baseUrl}/plugins/${pluginId}${p}`;
 	}
 
 	private async _get<T>(url: string): Promise<T> {
