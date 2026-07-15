@@ -12,6 +12,8 @@ export { PluginApiClient } from "./api-client";
 export type {
 	BaseExtensionProps,
 	ExtensionPointProps,
+	AdminPageProps,
+	ProjectPageProps,
 	ProjectSettingsTabProps,
 	SidebarGeneralSectionProps,
 	SidebarProjectSectionProps,

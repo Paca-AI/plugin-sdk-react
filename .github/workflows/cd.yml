@@ -48,12 +48,17 @@ jobs:
       - name: Setup Node.js with npm registry
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           registry-url: "https://registry.npmjs.org"
           scope: "@paca-ai"
 
-      - name: Upgrade npm
-        run: npm install -g npm@latest
+      # npm 12.0.0 has a packaging bug: libnpmpublish still requires
+      # `sigstore`, but the published 12.0.0 tarball is missing that
+      # module, so `npm publish --provenance` crashes with "Cannot find
+      # module 'sigstore'". Pin to the 11.x line until a patched 12.x
+      # ships. See https://github.com/npm/cli/issues/9722.
+      - name: Pin npm to a working version
+        run: npm install -g npm@11
 
       # For prerelease versions (e.g. 1.0.0-alpha.1), npm requires an explicit
       # --tag to avoid accidentally tagging as "latest".
