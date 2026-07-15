@@ -11,6 +11,8 @@
  *   - task.detail.section
  *   - project.settings.tab
  *   - view
+ *   - project.page      (full-page view routed from a project sidebar nav item)
+ *   - admin.page         (full-page view routed from the admin sidebar nav item)
  */
 
 import type { PluginApiClient } from "./api-client";
@@ -90,6 +92,34 @@ export interface ViewExtensionProps extends BaseExtensionProps {
 	viewConfig?: Record<string, unknown>;
 }
 
+// ── project.page ──────────────────────────────────────────────────────────────
+
+/**
+ * Props for components registered at `project.page`.
+ * Rendered full-bleed (outside the settings-tab layout) at a dedicated route,
+ * reached via a nav item the plugin registers in the project sidebar. Use this
+ * for a plugin feature that deserves its own page rather than a settings tab
+ * or a small sidebar fragment — e.g. a project-wide time-tracking view.
+ */
+export interface ProjectPageProps extends BaseExtensionProps {
+	/** The project this page belongs to. */
+	projectId: string;
+}
+
+// ── admin.page ────────────────────────────────────────────────────────────────
+
+/**
+ * Props for components registered at `admin.page`.
+ * Rendered full-bleed at a dedicated route under the host's admin section,
+ * reached via a nav item the plugin registers in the admin sidebar. Only
+ * visible to users with the `users.write` global permission (same gate as
+ * the built-in admin pages). Use this for cross-project / instance-wide
+ * plugin views — e.g. total logged time across all projects. The `api`
+ * client injected here has no `projectId` (global scope); use
+ * `api.pluginGet(pluginId, "/some-global-path")` for admin-scoped routes.
+ */
+export interface AdminPageProps extends BaseExtensionProps {}
+
 // ── Union helper ──────────────────────────────────────────────────────────────
 
 /** Union of all extension point prop types. */
@@ -98,4 +128,6 @@ export type ExtensionPointProps =
 	| SidebarProjectSectionProps
 	| TaskDetailSectionProps
 	| ProjectSettingsTabProps
-	| ViewExtensionProps;
+	| ViewExtensionProps
+	| ProjectPageProps
+	| AdminPageProps;

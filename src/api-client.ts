@@ -27,8 +27,13 @@ interface SuccessEnvelope<T> {
 export interface PluginApiClientOptions {
 	/** Base URL of the paca API, e.g. "https://app.paca.dev/api/v1". */
 	baseUrl: string;
-	/** Current project ID (injected by the host). */
-	projectId: string;
+	/**
+	 * Current project ID (injected by the host). Omit for admin/global-scope
+	 * pages (e.g. components registered at the `admin.page` extension point)
+	 * where there is no current project — `projectId` is then `""` and
+	 * `listTasks`/`getTask`/`getProject`/`listMembers` must not be called.
+	 */
+	projectId?: string;
 	/** Axios-compatible function for authenticated fetches (injected by host). */
 	fetch: (url: string, init?: RequestInit) => Promise<Response>;
 }
@@ -46,13 +51,18 @@ export class PluginApiClient {
 
 	constructor(opts: PluginApiClientOptions) {
 		this.baseUrl = opts.baseUrl.replace(/\/$/, "");
-		this.projectId = opts.projectId;
+		this.projectId = opts.projectId ?? "";
 		this._fetch = opts.fetch;
 	}
 
 	// ── Core read-only helpers ──────────────────────────────────────────────
 
-	/** List tasks for the current project with optional filters. */
+	/**
+	 * List tasks for the current project with optional filters.
+	 * Defaults to the host's max page size (200) when the caller doesn't
+	 * specify one, since most callers use this for an unfiltered "get the
+	 * project's tasks" lookup and the host otherwise defaults to only 20.
+	 */
 	async listTasks(filters: TaskFilters = {}): Promise<TaskSummary[]> {
 		const params = new URLSearchParams();
 		if (filters.status_ids?.length)
@@ -63,12 +73,12 @@ export class PluginApiClient {
 		if (filters.parent_task_id)
 			params.set("parent_task_id", filters.parent_task_id);
 		if (filters.page) params.set("page", String(filters.page));
-		if (filters.page_size) params.set("page_size", String(filters.page_size));
+		params.set("page_size", String(filters.page_size ?? 200));
 
 		const qs = params.toString();
 		const url = `${this.baseUrl}/projects/${this.projectId}/tasks${qs ? `?${qs}` : ""}`;
-		const envelope = await this._get<{ tasks: TaskSummary[] }>(url);
-		return envelope.tasks;
+		const envelope = await this._get<{ items: TaskSummary[] }>(url);
+		return envelope.items;
 	}
 
 	/** Get a single task by ID. */
@@ -87,10 +97,9 @@ export class PluginApiClient {
 
 	/** List members of the current project. */
 	async listMembers(): Promise<ProjectMember[]> {
-		const envelope = await this._get<{ members: ProjectMember[] }>(
+		return this._get<ProjectMember[]>(
 			`${this.baseUrl}/projects/${this.projectId}/members`,
 		);
-		return envelope.members;
 	}
 
 	// ── Plugin route helpers ────────────────────────────────────────────────
