@@ -1,6 +1,6 @@
 {
 	"name": "@paca-ai/plugin-sdk-react",
-	"version": "0.3.0",
+	"version": "0.1.0",
 	"description": "Paca Plugin SDK — frontend helpers for building Paca micro-frontend plugins",
 	"type": "module",
 	"publishConfig": {
