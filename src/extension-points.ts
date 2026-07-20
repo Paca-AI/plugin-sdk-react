@@ -88,6 +88,12 @@ export interface ProjectSettingsTabProps extends BaseExtensionProps {
 export interface ViewExtensionProps extends BaseExtensionProps {
 	/** The project for which the view is rendered. */
 	projectId: string;
+	/** The host's own view record ID for this specific view instance — stable
+	 * across renames/reloads, unique per view even when multiple views of the
+	 * same plugin/component are created in the same project. Use this to key
+	 * any per-view persisted state instead of self-managing a separate
+	 * list/switcher inside the plugin. */
+	viewId: string;
 	/** The view configuration stored for this registration. */
 	viewConfig?: Record<string, unknown>;
 }
