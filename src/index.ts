@@ -18,6 +18,7 @@ export type {
 	SidebarGeneralSectionProps,
 	SidebarProjectSectionProps,
 	TaskDetailSectionProps,
+	UserSettingsTabProps,
 	ViewExtensionProps,
 } from "./extension-points";
 export type { PluginContextValue, PluginProviderProps } from "./plugin-context";
