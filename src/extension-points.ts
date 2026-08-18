@@ -13,6 +13,7 @@
  *   - view
  *   - project.page      (full-page view routed from a project sidebar nav item)
  *   - admin.page         (full-page view routed from the admin sidebar nav item)
+ *   - user.settings.tab  (tab on the current user's own Account/Profile settings page)
  */
 
 import type { PluginApiClient } from "./api-client";
@@ -126,6 +127,22 @@ export interface ProjectPageProps extends BaseExtensionProps {
  */
 export interface AdminPageProps extends BaseExtensionProps {}
 
+// ── user.settings.tab ────────────────────────────────────────────────────────
+
+/**
+ * Props for components registered at `user.settings.tab`.
+ * Rendered as an additional tab on the current user's own Account/Profile
+ * settings page — personal preferences for that user, as opposed to
+ * `admin.page`'s instance-wide scope or `project.settings.tab`'s per-project
+ * scope. The `api` client injected here has no `projectId` (global scope,
+ * same as `admin.page`); use `api.pluginGet(pluginId, "/me/...")`-style
+ * routes scoped by the authenticated caller.
+ */
+export interface UserSettingsTabProps extends BaseExtensionProps {
+	/** The signed-in user's own ID. */
+	userId: string;
+}
+
 // ── Union helper ──────────────────────────────────────────────────────────────
 
 /** Union of all extension point prop types. */
@@ -136,4 +153,5 @@ export type ExtensionPointProps =
 	| ProjectSettingsTabProps
 	| ViewExtensionProps
 	| ProjectPageProps
-	| AdminPageProps;
+	| AdminPageProps
+	| UserSettingsTabProps;
