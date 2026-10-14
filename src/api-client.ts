@@ -8,7 +8,8 @@
  */
 
 import type {
-	ProjectMember,
+	ListMembersOptions,
+	MemberPage,
 	ProjectSummary,
 	Task,
 	TaskFilters,
@@ -95,10 +96,20 @@ export class PluginApiClient {
 		);
 	}
 
-	/** List members of the current project. */
-	async listMembers(): Promise<ProjectMember[]> {
-		return this._get<ProjectMember[]>(
-			`${this.baseUrl}/projects/${this.projectId}/members`,
+	/**
+	 * One page of the current project's members (cursor-paginated). Pass
+	 * `ids` to look up specific members, `search` to filter by name; follow
+	 * `next_cursor` for further pages.
+	 */
+	async listMembers(opts: ListMembersOptions = {}): Promise<MemberPage> {
+		const params = new URLSearchParams();
+		if (opts.search) params.set("search", opts.search);
+		if (opts.ids?.length) params.set("ids", opts.ids.join(","));
+		if (opts.cursor) params.set("cursor", opts.cursor);
+		if (opts.pageSize) params.set("page_size", String(opts.pageSize));
+		const qs = params.toString();
+		return this._get<MemberPage>(
+			`${this.baseUrl}/projects/${this.projectId}/members${qs ? `?${qs}` : ""}`,
 		);
 	}
 

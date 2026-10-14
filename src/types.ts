@@ -42,12 +42,35 @@ export interface ProjectSummary {
 
 // ── Members ───────────────────────────────────────────────────────────────────
 
-/** Project member entry returned by the members_list host function. */
+/** A project member as returned by the members list. */
 export interface ProjectMember {
 	id: string;
 	username: string;
 	full_name: string;
-	role_name: string;
+	/** The roles the member holds in the project. */
+	roles?: { id: string; name: string }[];
+}
+
+/** Filters for PluginApiClient.listMembers(). */
+export interface ListMembersOptions {
+	/** Words that must all appear in the member's username, name or handle. */
+	search?: string;
+	/** Only these members, by membership id or account id (at most 100). */
+	ids?: string[];
+	/** Cursor from a previous page's `next_cursor`. */
+	cursor?: string;
+	/** Page size, 1-100 (default 20). */
+	pageSize?: number;
+}
+
+/** One page of the members list, keyset-paginated by cursor. */
+export interface MemberPage {
+	items: ProjectMember[];
+	page_size: number;
+	/** Pass as `cursor` for the next page; null on the last page. */
+	next_cursor: string | null;
+	/** Members matching the filters across all pages. */
+	total_count: number;
 }
 
 /** Role-based permission flags available to plugin components. */
