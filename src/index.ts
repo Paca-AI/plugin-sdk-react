@@ -33,6 +33,8 @@ export {
 // ── Types ─────────────────────────────────────────────────────────────────────
 export type {
 	PluginMeta,
+	ListMembersOptions,
+	MemberPage,
 	ProjectMember,
 	ProjectPermissions,
 	ProjectSummary,
