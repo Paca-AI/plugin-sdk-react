@@ -26,8 +26,21 @@ export interface TaskFilters {
 	assignee_ids?: string[];
 	sprint_id?: string;
 	parent_task_id?: string;
+	/** Cursor from a previous page's `next_cursor` (see listTasksPage). */
+	cursor?: string;
+	/** @deprecated Ignored: tasks page by cursor. Use `cursor` (see listTasksPage). */
 	page?: number;
 	page_size?: number;
+}
+
+/** One page of the tasks list, keyset-paginated by cursor. */
+export interface TaskPage {
+	items: TaskSummary[];
+	page_size: number;
+	/** Pass as `cursor` for the next page; null on the last page. */
+	next_cursor: string | null;
+	/** Tasks matching the filters across all pages (first page only). */
+	total_count?: number;
 }
 
 // ── Project ───────────────────────────────────────────────────────────────────

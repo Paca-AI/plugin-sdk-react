@@ -40,6 +40,7 @@ export type {
 	ProjectSummary,
 	Task,
 	TaskFilters,
+	TaskPage,
 	TaskSummary,
 } from "./types";
 export { permissionsFromRole } from "./types";

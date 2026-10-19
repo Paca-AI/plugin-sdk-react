@@ -11,6 +11,7 @@ import type {
 	ListMembersOptions,
 	MemberPage,
 	ProjectSummary,
+	TaskPage,
 	Task,
 	TaskFilters,
 	TaskSummary,
@@ -59,13 +60,23 @@ export class PluginApiClient {
 	// ── Core read-only helpers ──────────────────────────────────────────────
 
 	/**
-	 * List tasks for the current project with optional filters.
-	 * Defaults to the host's max page size (200) when the caller doesn't
-	 * specify one, since most callers use this for an unfiltered "get the
-	 * project's tasks" lookup and the host otherwise defaults to only 20.
+	 * The first page of the current project's tasks (up to 200 by default).
+	 * A project with more matching tasks is truncated: use `listTasksPage` and
+	 * follow `next_cursor` when every task matters.
 	 */
 	async listTasks(filters: TaskFilters = {}): Promise<TaskSummary[]> {
+		return (await this.listTasksPage(filters)).items;
+	}
+
+	/**
+	 * One page of the current project's tasks with optional filters. Pass the
+	 * previous page's `next_cursor` as `filters.cursor` for the next page.
+	 * Defaults to the host's max page size (200) when the caller doesn't
+	 * specify one, since the host otherwise defaults to only 20.
+	 */
+	async listTasksPage(filters: TaskFilters = {}): Promise<TaskPage> {
 		const params = new URLSearchParams();
+		if (filters.cursor) params.set("cursor", filters.cursor);
 		if (filters.status_ids?.length)
 			params.set("status_ids", filters.status_ids.join(","));
 		if (filters.assignee_ids?.length)
@@ -73,13 +84,11 @@ export class PluginApiClient {
 		if (filters.sprint_id) params.set("sprint_id", filters.sprint_id);
 		if (filters.parent_task_id)
 			params.set("parent_task_id", filters.parent_task_id);
-		if (filters.page) params.set("page", String(filters.page));
 		params.set("page_size", String(filters.page_size ?? 200));
 
 		const qs = params.toString();
 		const url = `${this.baseUrl}/projects/${this.projectId}/tasks${qs ? `?${qs}` : ""}`;
-		const envelope = await this._get<{ items: TaskSummary[] }>(url);
-		return envelope.items;
+		return this._get<TaskPage>(url);
 	}
 
 	/** Get a single task by ID. */

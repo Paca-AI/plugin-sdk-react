@@ -52,7 +52,7 @@ Returns `{ api, ui, meta }` from the nearest `<PluginProvider>`.
 
 ### `PluginApiClient`
 Scoped HTTP client. Methods:
-- `listTasks(filters?)` — list tasks in current project
+- `listTasks(filters?)` — the first page of the current project's tasks (up to 200); use `listTasksPage(filters?)` and follow `next_cursor` to read them all
 - `getTask(taskId)` — fetch a single task
 - `getProject()` — fetch current project summary
 - `listMembers()` — list project members
