@@ -13,6 +13,7 @@ export type {
 	BaseExtensionProps,
 	ExtensionPointProps,
 	AdminPageProps,
+	AppPageProps,
 	ProjectPageProps,
 	ProjectSettingsTabProps,
 	SidebarGeneralSectionProps,

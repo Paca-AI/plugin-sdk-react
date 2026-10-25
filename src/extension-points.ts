@@ -13,6 +13,7 @@
  *   - view
  *   - project.page      (full-page view routed from a project sidebar nav item)
  *   - admin.page         (full-page view routed from the admin sidebar nav item)
+ *   - app.page           (full-page view at /plugin-pages/:pluginId/:slug, listed in no sidebar)
  *   - user.settings.tab  (tab on the current user's own Account/Profile settings page)
  */
 
@@ -127,6 +128,22 @@ export interface ProjectPageProps extends BaseExtensionProps {
  */
 export interface AdminPageProps extends BaseExtensionProps {}
 
+// ── app.page ──────────────────────────────────────────────────────────────────
+
+/**
+ * Props for components registered at `app.page`.
+ * Rendered full-bleed at `/plugin-pages/:pluginId/:slug` (nav item `scope: "app"`),
+ * a top-level page that no sidebar lists. It exists so a plugin can own a URL
+ * on the Paca origin — typically the address an external service redirects the
+ * browser back to (an App-installation or OAuth callback). The page sits under
+ * the host's authenticated layout, so by the time it mounts an expired access
+ * token has been refreshed (or the user has signed in and been returned here);
+ * the injected `api` client then calls the plugin's own backend as that user.
+ * `api` has no `projectId` (global scope). Read the callback's query string
+ * from `window.location`, and treat it as untrusted input.
+ */
+export interface AppPageProps extends BaseExtensionProps {}
+
 // ── user.settings.tab ────────────────────────────────────────────────────────
 
 /**
@@ -154,4 +171,5 @@ export type ExtensionPointProps =
 	| ViewExtensionProps
 	| ProjectPageProps
 	| AdminPageProps
+	| AppPageProps
 	| UserSettingsTabProps;
